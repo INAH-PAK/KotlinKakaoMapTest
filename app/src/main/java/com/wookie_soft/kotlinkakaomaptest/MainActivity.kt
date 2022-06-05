@@ -41,10 +41,7 @@ class MainActivity : AppCompatActivity() {
         val keyHash: String = Utility.getKeyHash(this)
         Log.i("키해시", keyHash)
 
-        //카카오 지도 맵뷰
-        mapView = MapView(this)
-        val mapViewContainer:ViewGroup = binding.mapview
-        mapViewContainer.addView(mapView)
+
 
         // 내위치 받자 !------------------------------------------------------------------------------------------------------------
         // 1. 동적 퍼미션
@@ -66,6 +63,7 @@ class MainActivity : AppCompatActivity() {
             binding.btn02Start.isEnabled = false
             binding.btn03Stop.isEnabled = true
         }
+        //타이머 멈춤
         binding.btn03Stop.setOnClickListener {
             pauseTime = binding.chronometer.base - SystemClock.elapsedRealtime()
             binding.chronometer.stop()
@@ -80,7 +78,6 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("lat",pplocation.latitude.toDouble())
             intent.putExtra("lng",pplocation.longitude.toDouble())
             startActivity(intent)
-            mapViewContainer.removeAllViews()
 
 
 
@@ -93,11 +90,17 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         removeLocationUpdate()
+        binding.mapview.removeAllViews()
     }
 
     override fun onResume() {
         super.onResume()
         requestLocationUpdate()
+
+        //카카오 지도 맵뷰
+        mapView = MapView(this)
+        val mapViewContainer:ViewGroup = binding.mapview
+        mapViewContainer.addView(mapView)
     }
 
 
@@ -114,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         val mapPoint = mapPointWithGeoCoord(location.latitude.toDouble(),location.longitude.toDouble()).also { marker.mapPoint = it }
         marker.markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
         marker.selectedMarkerType =
-            MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+        MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
         mapView.addPOIItem(marker)
 
         pplocation = location
